@@ -1,3 +1,5 @@
+#include "mgos_syslog.h"
+
 #include <mgos.h>
 
 struct mgos_syslog {
@@ -51,11 +53,13 @@ enum mgos_syslog_facility {
 static bool init() {
   if (!s_init) {
     if (mgos_sys_config_is_initialized()) {
-      s_syslog = (struct mgos_syslog *) calloc(1, sizeof(struct mgos_syslog));
-      s_syslog->syslog = mgos_sys_config_get_syslog_url();
-      if (NULL != s_syslog->syslog && (0 != strlen(s_syslog->syslog))) {
-        s_syslog->hostname = mgos_sys_config_get_syslog_hostname();
-        if (NULL != s_syslog->hostname && (0 != strlen(s_syslog->hostname))) {
+      const char *syslog = mgos_sys_config_get_syslog_url();
+      const char *hostname = mgos_sys_config_get_syslog_hostname();
+      if (!mgos_conf_str_empty(syslog) && !mgos_conf_str_empty(syslog)) {
+        s_syslog = (struct mgos_syslog *) calloc(1, sizeof(*s_syslog));
+        if (s_syslog != NULL) {
+          s_syslog->syslog = syslog;
+          s_syslog->hostname = hostname;
           s_init = true;
         }
       }
