@@ -1,1 +1,1 @@
-# upnp-device
+# Implements Syslog facility
